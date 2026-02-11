@@ -1,0 +1,13 @@
+# 其余规则见根目录 .gitignore
+# 以下仅为本目录相关、便于在 backend 下查阅
+
+node_modules
+dist
+.env
+.env.local
+
+# SQLite（开发/本地数据不提交）
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm

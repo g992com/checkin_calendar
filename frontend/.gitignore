@@ -1,0 +1,12 @@
+# 其余规则见根目录 .gitignore
+# 以下为前端目录特有或需覆盖根目录的规则
+
+node_modules
+dist
+dist-ssr
+.vite
+.cache
+
+# 允许提交推荐扩展配置，便于团队一致
+.vscode/*
+!.vscode/extensions.json

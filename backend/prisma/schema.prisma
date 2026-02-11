@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./data/database.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  avatar    String?
+  createdAt DateTime @default(now())
+
+  tasks       Task[]
+  checkIns    CheckIn[]
+  groupMembers GroupMember[]
+
+  @@map("users")
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  userId      String
+  groupId     String?
+  name        String
+  description String?
+  type        String   // "循环" | "一次性"
+  cycleType   String   // "每日" | "每周" | "每月" | "自定义"
+  cycleConfig String?  @default("{}") // JSON string for cycle configuration
+  targetTime  String   // Required: target check-in time (e.g., "21:00")
+  color       String   @default("#3b82f6")
+  startDate   DateTime?
+  endDate     DateTime?
+  status      String   @default("进行中") // "进行中" | "已完成" | "已暂停"
+  createdAt   DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checkIns CheckIn[]
+
+  @@map("tasks")
+}
+
+model CheckIn {
+  id             String   @id @default(cuid())
+  taskId          String
+  userId          String
+  checkInDate     DateTime // Date of check-in
+  checkInDateTime DateTime @default(now()) // Actual check-in time with timestamp
+  createdAt       DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@map("checkins")
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  inviteCode  String   @unique
+  createdAt   DateTime @default(now())
+
+  members GroupMember[]
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id        String   @id @default(cuid())
+  groupId   String
+  userId    String
+  role      String   @default("成员") // "创建者" | "成员"
+  joinedAt  DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("group_members")
+}
+
