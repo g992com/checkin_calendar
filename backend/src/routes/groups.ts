@@ -234,9 +234,28 @@ router.get('/:id/calendar', async (req, res) => {
     const { id } = req.params;
     const { startDate, endDate } = req.query;
 
-    // 获取组的所有任务
-    const tasks = await prisma.task.findMany({
+    // 获取组成员
+    const members = await prisma.groupMember.findMany({
       where: { groupId: id },
+      include: {
+        user: true,
+      },
+    });
+
+    // 获取组成员的用户ID列表
+    const memberIds = members.map((member) => member.userId);
+
+    // 获取组任务和组成员的个人任务
+    const tasks = await prisma.task.findMany({
+      where: {
+        OR: [
+          { groupId: id }, // 组任务
+          { 
+            userId: { in: memberIds },
+            groupId: null // 个人任务
+          }
+        ],
+      },
       include: {
         user: true,
       },
@@ -268,14 +287,6 @@ router.get('/:id/calendar', async (req, res) => {
       },
       orderBy: {
         checkInDate: 'desc',
-      },
-    });
-
-    // 获取组成员
-    const members = await prisma.groupMember.findMany({
-      where: { groupId: id },
-      include: {
-        user: true,
       },
     });
 

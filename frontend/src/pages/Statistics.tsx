@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getUserStatistics } from '../api/client';
 import {
@@ -21,6 +22,7 @@ const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'
 
 export default function Statistics() {
   const { user } = useUser();
+  const navigate = useNavigate();
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -75,7 +77,16 @@ export default function Statistics() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">统计分析</h1>
+      <div className="flex justify-between items-center mb-6">
+        <button
+          onClick={() => navigate('/calendar')}
+          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          返回打卡页面
+        </button>
+        <h1 className="text-2xl font-bold">统计分析</h1>
+        <div className="w-24"></div> {/* 占位，保持标题居中 */}
+      </div>
 
       {/* 总体统计 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

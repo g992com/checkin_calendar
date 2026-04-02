@@ -96,7 +96,8 @@ export const getGroup = async (id: string) => {
 };
 
 export const joinGroup = async (id: string, inviteCode: string) => {
-  const response = await apiClient.post(`/groups/${id}/join`, { inviteCode });
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const response = await apiClient.post(`/groups/${id}/join`, { userId: user.id, inviteCode });
   return response.data.data;
 };
 

@@ -4,6 +4,9 @@ interface TaskLabelProps {
     name: string;
     targetTime: string;
     color: string;
+    user?: {
+      username: string;
+    };
   };
   checked: boolean;
   onCheck: () => void;
@@ -27,7 +30,12 @@ export default function TaskLabel({ task, checked, onCheck }: TaskLabelProps) {
     >
       <div className="flex-1 min-w-0">
         <div className="font-medium truncate">{task.name}</div>
-        <div className="text-xs opacity-75">{formatTime(task.targetTime)}</div>
+        <div className="text-xs opacity-75">
+          {formatTime(task.targetTime)}
+          {task.user && task.user.username && (
+            <span className="ml-1">({task.user.username})</span>
+          )}
+        </div>
       </div>
       <div
         className={`w-4 h-4 rounded border-2 flex items-center justify-center ${

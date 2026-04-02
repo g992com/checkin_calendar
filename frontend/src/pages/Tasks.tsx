@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getTasks, createTask, updateTask, deleteTask } from '../api/client';
 import type { CycleConfig } from '../utils/calculations';
@@ -19,6 +20,7 @@ interface Task {
 
 export default function Tasks() {
   const { user } = useUser();
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -167,7 +169,15 @@ export default function Tasks() {
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">任务管理</h1>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate('/calendar')}
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            返回打卡页面
+          </button>
+          <h1 className="text-2xl font-bold">任务管理</h1>
+        </div>
         <button
           onClick={() => {
             setShowForm(true);

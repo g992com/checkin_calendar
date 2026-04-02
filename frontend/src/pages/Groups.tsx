@@ -232,6 +232,9 @@ export default function Groups() {
               </div>
               <div className="mt-3">
                 <p className="text-sm text-gray-600 mb-2">
+                  组ID：<span className="font-mono font-semibold">{group.id}</span>
+                </p>
+                <p className="text-sm text-gray-600 mb-2">
                   邀请码：<span className="font-mono font-semibold">{group.inviteCode}</span>
                 </p>
                 <div className="flex flex-wrap gap-2">
