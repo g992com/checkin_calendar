@@ -141,9 +141,16 @@ router.get('/group/:groupId', async (req, res) => {
       },
     });
 
-    // 获取组的所有任务
+    // 获取组的所有任务（包括个人任务）
     const tasks = await prisma.task.findMany({
-      where: { groupId },
+      where: {
+        OR: [
+          { groupId },
+          { userId: {
+            in: members.map(m => m.userId)
+          }}
+        ]
+      },
     });
 
     // 获取组的所有打卡记录
@@ -160,14 +167,38 @@ router.get('/group/:groupId', async (req, res) => {
     });
 
     // 按成员统计
-    const memberStats = members.map((member) => {
+    const memberStats = await Promise.all(members.map(async (member) => {
+      const memberTasks = tasks.filter(t => t.userId === member.userId);
       const memberCheckIns = checkIns.filter((ci) => ci.userId === member.userId);
+      
+      // 计算打卡率
+      const totalTaskDays = memberTasks.length * 30; // 假设每个任务30天
+      const checkInRate = totalTaskDays > 0 ? (memberCheckIns.length / totalTaskDays) * 100 : 0;
+      
+      // 计算每个任务的连续打卡数
+      let maxCurrentStreak = 0;
+      let maxLongestStreak = 0;
+      
+      for (const task of memberTasks) {
+        const taskCheckIns = memberCheckIns.filter(ci => ci.taskId === task.id);
+        const checkInDates = taskCheckIns.map(ci => ci.checkInDate);
+        const currentStreak = calculateStreak(checkInDates);
+        const longestStreak = calculateLongestStreak(checkInDates);
+        
+        maxCurrentStreak = Math.max(maxCurrentStreak, currentStreak);
+        maxLongestStreak = Math.max(maxLongestStreak, longestStreak);
+      }
+      
       return {
         userId: member.userId,
         username: member.user.username,
+        totalTasks: memberTasks.length,
         totalCheckIns: memberCheckIns.length,
+        checkInRate: parseFloat(checkInRate.toFixed(2)),
+        maxCurrentStreak,
+        maxLongestStreak,
       };
-    });
+    }));
 
     // 总体统计
     const totalCheckIns = checkIns.length;

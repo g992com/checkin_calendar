@@ -2,11 +2,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { UserProvider, useUser } from './context/UserContext';
 import Login from './pages/Login';
-import Calendar from './pages/Calendar';
 import Tasks from './pages/Tasks';
-import Statistics from './pages/Statistics';
 import Groups from './pages/Groups';
 import GroupCalendar from './pages/GroupCalendar';
+import GroupStatistics from './pages/GroupStatistics';
 
 const queryClient = new QueryClient();
 
@@ -20,14 +19,6 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route
-        path="/calendar"
-        element={
-          <ProtectedRoute>
-            <Calendar />
-          </ProtectedRoute>
-        }
-      />
-      <Route
         path="/tasks"
         element={
           <ProtectedRoute>
@@ -35,11 +26,20 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      {/* 重定向个人日历和个人统计页面到组管理页面 */}
+      <Route
+        path="/calendar"
+        element={
+          <ProtectedRoute>
+            <Navigate to="/groups" replace />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/statistics"
         element={
           <ProtectedRoute>
-            <Statistics />
+            <Navigate to="/groups" replace />
           </ProtectedRoute>
         }
       />
@@ -56,6 +56,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <GroupCalendar />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/groups/:id/statistics"
+        element={
+          <ProtectedRoute>
+            <GroupStatistics />
           </ProtectedRoute>
         }
       />

@@ -86,3 +86,18 @@ coverage/
 # =====================
 *.local
 .cache/
+.trae/documents/group-calendar-fix-plan.md
+.trae/documents/group-calendar-permission-fix-plan.md
+.trae/rules/work-execution-standards.md
+.trae/specs/group-calendar-user-switching/checklist.md
+.trae/specs/group-calendar-user-switching/spec.md
+.trae/specs/group-calendar-user-switching/tasks.md
+.trae/specs/group-member-tasks/checklist.md
+.trae/specs/group-member-tasks/spec.md
+.trae/specs/group-member-tasks/tasks.md
+.trae/specs/simplify-group-functionality/checklist.md
+.trae/specs/simplify-group-functionality/spec.md
+.trae/specs/simplify-group-functionality/tasks.md
+.trae/specs/user-group-relationship/checklist.md
+.trae/specs/user-group-relationship/spec.md
+.trae/specs/user-group-relationship/tasks.md

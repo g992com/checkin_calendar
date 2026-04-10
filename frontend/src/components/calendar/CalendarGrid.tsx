@@ -15,6 +15,7 @@ interface Task {
   cycleConfig: string;
   startDate?: string | null;
   endDate?: string | null;
+  userId: string;
 }
 
 interface CheckIn {
@@ -30,10 +31,11 @@ interface CalendarDay {
 
 interface CalendarGridProps {
   groupId?: string;
+  userId?: string;
   onCheckInSuccess?: (streak: number, isMilestone: boolean) => void;
 }
 
-export default function CalendarGrid({ groupId, onCheckInSuccess }: CalendarGridProps = {}) {
+export default function CalendarGrid({ groupId, userId, onCheckInSuccess }: CalendarGridProps = {}) {
   const { user } = useUser();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -44,7 +46,7 @@ export default function CalendarGrid({ groupId, onCheckInSuccess }: CalendarGrid
     if (user) {
       loadData();
     }
-  }, [user, currentMonth, groupId]);
+  }, [user, currentMonth, groupId, userId]);
 
   const loadData = async () => {
     if (!user) return;
@@ -58,12 +60,15 @@ export default function CalendarGrid({ groupId, onCheckInSuccess }: CalendarGrid
           startDate: format(monthStart, 'yyyy-MM-dd'),
           endDate: format(monthEnd, 'yyyy-MM-dd'),
         });
+        
+        // 显示所有用户的任务和打卡记录
         setTasks(data.tasks ?? []);
         setCheckIns(data.checkIns ?? []);
       } else {
+        const targetUserId = userId || user.id;
         const [tasksData, checkInsData] = await Promise.all([
-          getTasks({ userId: user.id }),
-          getCheckIns({ userId: user.id }),
+          getTasks({ userId: targetUserId }),
+          getCheckIns({ userId: targetUserId }),
         ]);
         setTasks(tasksData);
         setCheckIns(checkInsData);
@@ -77,6 +82,19 @@ export default function CalendarGrid({ groupId, onCheckInSuccess }: CalendarGrid
 
   const handleCheckIn = async (taskId: string, date: Date) => {
     if (!user) return;
+
+    // 权限检查：只能操作自己的任务
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) {
+      alert('任务不存在');
+      return;
+    }
+    
+    // 只有任务的所有者才能操作
+    if (task.userId !== user.id) {
+      alert('您没有权限操作其他用户的打卡任务');
+      return;
+    }
 
     try {
       // 检查是否已打卡

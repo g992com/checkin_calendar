@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createUser } from '../api/client';
+import { createUser, getGroups } from '../api/client';
 import { useUser } from '../context/UserContext';
 
 export default function Login() {
@@ -18,7 +18,9 @@ export default function Login() {
       const user = await createUser(username.trim());
       setUser(user);
       localStorage.setItem('user', JSON.stringify(user));
-      navigate('/calendar');
+      
+      // 无论用户是否已有组，都直接跳转到组管理页面
+      navigate('/groups');
     } catch (error) {
       console.error('Login error:', error);
       alert('登录失败，请重试');

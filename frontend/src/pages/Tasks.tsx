@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { getTasks, createTask, updateTask, deleteTask } from '../api/client';
+import { getTasks, createTask, updateTask, deleteTask, getGroups } from '../api/client';
 import type { CycleConfig } from '../utils/calculations';
 
 interface Task {
@@ -16,11 +16,38 @@ interface Task {
   status: string;
   startDate?: string | null;
   endDate?: string | null;
+  userId: string;
+  groupId?: string;
+}
+
+interface Group {
+  id: string;
+  name: string;
+  members: Array<{
+    id: string;
+    userId: string;
+    role: string;
+    user: {
+      id: string;
+      username: string;
+    };
+  }>;
+  virtualMembers?: Array<{
+    id: string;
+    name: string;
+  }>;
+}
+
+interface Member {
+  id: string;
+  name: string;
+  type: 'real' | 'virtual';
 }
 
 export default function Tasks() {
   const { user } = useUser();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -36,13 +63,73 @@ export default function Tasks() {
     status: '进行中',
     startDate: '' as string,
     endDate: '' as string,
+    groupId: '' as string,
+    memberId: '' as string,
   });
+  
+  // 组和组员状态
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
 
   useEffect(() => {
     if (user) {
       loadTasks();
+      loadGroups();
     }
   }, [user]);
+
+  // 当组件加载时，检查 URL 中的查询参数
+  useEffect(() => {
+    const groupId = searchParams.get('groupId');
+    const memberId = searchParams.get('memberId');
+    if (groupId && memberId) {
+      // 自动设置表单中的 groupId 和 memberId
+      setFormData(prev => ({
+        ...prev,
+        groupId,
+        memberId
+      }));
+      // 显示任务创建表单
+      setShowForm(true);
+    }
+  }, [searchParams]);
+
+  // 当组选择变化时，更新组员列表
+  useEffect(() => {
+    if (formData.groupId) {
+      const selectedGroup = groups.find(group => group.id === formData.groupId);
+      if (selectedGroup) {
+        // 构建组员列表，包括真实成员和虚拟组员
+        const allMembers: Member[] = [];
+        
+        // 添加真实成员
+        selectedGroup.members.forEach(member => {
+          allMembers.push({
+            id: member.userId,
+            name: member.user.username,
+            type: 'real'
+          });
+        });
+        
+        // 添加虚拟组员
+        if (selectedGroup.virtualMembers) {
+          selectedGroup.virtualMembers.forEach(member => {
+            allMembers.push({
+              id: member.id,
+              name: member.name,
+              type: 'virtual'
+            });
+          });
+        }
+        
+        setMembers(allMembers);
+        // 重置组员选择
+        setFormData(prev => ({ ...prev, memberId: '' }));
+      }
+    } else {
+      setMembers([]);
+    }
+  }, [formData.groupId, groups]);
 
   const loadTasks = async () => {
     if (!user) return;
@@ -58,6 +145,32 @@ export default function Tasks() {
     }
   };
 
+  const loadGroups = async () => {
+    if (!user) return;
+    
+    try {
+      const data = await getGroups({ userId: user.id });
+      
+      // 从本地存储加载虚拟组员信息
+      const virtualMembersData = localStorage.getItem('virtualMembers');
+      const virtualMembersMap = virtualMembersData ? JSON.parse(virtualMembersData) : {};
+      
+      // 为每个组添加虚拟组员
+      const groupsWithVirtualMembers = data.map(group => {
+        const virtualMembers = virtualMembersMap[group.id] || [];
+        return {
+          ...group,
+          virtualMembers
+        };
+      });
+      
+      setGroups(groupsWithVirtualMembers);
+    } catch (error) {
+      console.error('Load groups error:', error);
+      alert('加载组列表失败');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -68,12 +181,20 @@ export default function Tasks() {
         startDate: formData.startDate || null,
         endDate: formData.endDate || null,
       };
+      
+      // 确定任务的所有者ID
+      let taskUserId = user.id;
+      if (formData.memberId) {
+        taskUserId = formData.memberId;
+      }
+      
       if (editingTask) {
         await updateTask(editingTask.id, payload);
       } else {
         await createTask({
           ...payload,
-          userId: user.id,
+          userId: taskUserId,
+          groupId: formData.groupId || undefined,
         });
       }
       await loadTasks();
@@ -155,6 +276,8 @@ export default function Tasks() {
       status: '进行中',
       startDate: '',
       endDate: '',
+      groupId: '',
+      memberId: '',
     });
   };
 
@@ -205,6 +328,41 @@ export default function Tasks() {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-3 py-2 border rounded-md"
               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">选择组</label>
+                <select
+                  value={formData.groupId}
+                  onChange={(e) => setFormData({ ...formData, groupId: e.target.value, memberId: '' })}
+                  className="w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="">选择组</option>
+                  {groups.map(group => (
+                    <option key={group.id} value={group.id}>
+                      {group.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">选择组员</label>
+                <select
+                  value={formData.memberId}
+                  onChange={(e) => setFormData({ ...formData, memberId: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-md"
+                  disabled={!formData.groupId}
+                >
+                  <option value="">选择组员</option>
+                  {members.map(member => (
+                    <option key={member.id} value={member.id}>
+                      {member.name}
+                      {member.type === 'virtual' && ' (虚拟)'}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div>
