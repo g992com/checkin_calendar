@@ -99,16 +99,18 @@ export default function Tasks() {
     if (formData.groupId) {
       const selectedGroup = groups.find(group => group.id === formData.groupId);
       if (selectedGroup) {
-        // 构建组员列表，包括真实成员和虚拟组员
+        // 构建组员列表，包括真实成员和虚拟组员（排除创建者）
         const allMembers: Member[] = [];
         
-        // 添加真实成员
+        // 添加真实成员（排除创建者）
         selectedGroup.members.forEach(member => {
-          allMembers.push({
-            id: member.userId,
-            name: member.user.username,
-            type: 'real'
-          });
+          if (member.role !== '创建者') {
+            allMembers.push({
+              id: member.userId,
+              name: member.user.username,
+              type: 'real'
+            });
+          }
         });
         
         // 添加虚拟组员

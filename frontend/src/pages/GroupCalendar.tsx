@@ -33,14 +33,16 @@ export default function GroupCalendar() {
           // 提取成员信息
           const memberList: GroupMember[] = [];
           
-          // 添加真实成员
+          // 添加真实成员（排除创建者）
           if (group.members) {
             group.members.forEach((member: any) => {
-              memberList.push({
-                userId: member.userId,
-                username: member.user.username,
-                avatar: member.user.avatar
-              });
+              if (member.role !== '创建者') {
+                memberList.push({
+                  userId: member.userId,
+                  username: member.user.username,
+                  avatar: member.user.avatar
+                });
+              }
             });
           }
           
