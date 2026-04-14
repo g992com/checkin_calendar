@@ -1,0 +1,24 @@
+- generic [ref=e14]:
+  - generic [ref=e40]:
+    - heading "组/家庭管理" [level=1] [ref=e41]
+    - button "创建组" [ref=e43] [cursor=pointer]
+  - generic [ref=e45]:
+    - generic [ref=e46]:
+      - heading "FamilyTest" [level=3] [ref=e48]
+      - generic [ref=e49]:
+        - button "添加组员" [ref=e50] [cursor=pointer]
+        - link "查看日历" [ref=e51] [cursor=pointer]:
+          - /url: /groups/cmnxib1nu00015ybbegbfeq6x/calendar
+        - link "统计分析" [ref=e52] [cursor=pointer]:
+          - /url: /groups/cmnxib1nu00015ybbegbfeq6x/statistics
+    - generic [ref=e53]:
+      - paragraph [ref=e54]: 组ID：cmnxib1nu00015ybbegbfeq6x
+      - paragraph [ref=e55]: 邀请码：DD0EDC54
+      - generic [ref=e56]:
+        - heading "组内成员" [level=4] [ref=e57]
+        - generic [ref=e59]: test (创建者)
+      - generic [ref=e60]:
+        - heading "虚拟组员" [level=4] [ref=e61]
+        - generic [ref=e63]:
+          - generic [ref=e64]: Alina
+          - button "×" [ref=e65] [cursor=pointer]

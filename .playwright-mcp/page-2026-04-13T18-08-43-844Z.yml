@@ -1,0 +1,5 @@
+- generic [ref=e14]:
+  - generic [ref=e15]:
+    - heading "组/家庭管理" [level=1] [ref=e16]
+    - button "创建组" [ref=e18] [cursor=pointer]
+  - paragraph [ref=e20]: 还没有加入任何组，创建一个或加入一个吧！

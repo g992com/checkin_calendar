@@ -1,0 +1,20 @@
+- generic [ref=e14]:
+  - generic [ref=e15]:
+    - heading "组/家庭管理" [level=1] [ref=e16]
+    - button "创建组" [active] [ref=e18] [cursor=pointer]
+  - generic [ref=e21]:
+    - heading "创建组" [level=2] [ref=e22]
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e25]: 组名称 *
+        - textbox "例如：我的家庭" [ref=e26]
+      - generic [ref=e27]:
+        - generic [ref=e28]: 描述
+        - textbox "组的描述信息（可选）" [ref=e29]
+      - generic [ref=e30]:
+        - generic [ref=e31]: 组员姓名 *（至少添加一个组员）
+        - button "添加组员" [ref=e33] [cursor=pointer]
+      - generic [ref=e34]:
+        - button "创建" [ref=e35] [cursor=pointer]
+        - button "取消" [ref=e36] [cursor=pointer]
+  - paragraph [ref=e20]: 还没有加入任何组，创建一个或加入一个吧！

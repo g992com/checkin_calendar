@@ -1,0 +1,58 @@
+- generic [ref=e66]:
+  - navigation [ref=e67]:
+    - generic [ref=e68]:
+      - generic [ref=e69]:
+        - link "返回组管理" [ref=e70] [cursor=pointer]:
+          - /url: /groups
+        - heading "FamilyTest - 组日历" [level=1] [ref=e71]
+      - generic [ref=e72]:
+        - generic [ref=e73]: 欢迎，test
+        - combobox [ref=e75]:
+          - option "Alina (虚拟)" [selected]
+        - link "统计分析" [ref=e76] [cursor=pointer]:
+          - /url: /groups/cmnxib1nu00015ybbegbfeq6x/statistics
+        - button "设置任务" [ref=e77] [cursor=pointer]
+        - button "退出" [ref=e78] [cursor=pointer]
+  - generic [ref=e80]:
+    - generic [ref=e81]:
+      - button "上个月" [ref=e82] [cursor=pointer]
+      - heading "2026年04月" [level=2] [ref=e83]
+      - button "下个月" [ref=e84] [cursor=pointer]
+    - generic [ref=e85]:
+      - generic [ref=e86]: 日
+      - generic [ref=e87]: 一
+      - generic [ref=e88]: 二
+      - generic [ref=e89]: 三
+      - generic [ref=e90]: 四
+      - generic [ref=e91]: 五
+      - generic [ref=e92]: 六
+      - generic [ref=e94]: "1"
+      - generic [ref=e96]: "2"
+      - generic [ref=e98]: "3"
+      - generic [ref=e100]: "4"
+      - generic [ref=e102]: "5"
+      - generic [ref=e104]: "6"
+      - generic [ref=e106]: "7"
+      - generic [ref=e108]: "8"
+      - generic [ref=e110]: "9"
+      - generic [ref=e112]: "10"
+      - generic [ref=e114]: "11"
+      - generic [ref=e116]: "12"
+      - generic [ref=e118]: "13"
+      - generic [ref=e120]: "14"
+      - generic [ref=e122]: "15"
+      - generic [ref=e124]: "16"
+      - generic [ref=e126]: "17"
+      - generic [ref=e128]: "18"
+      - generic [ref=e130]: "19"
+      - generic [ref=e132]: "20"
+      - generic [ref=e134]: "21"
+      - generic [ref=e136]: "22"
+      - generic [ref=e138]: "23"
+      - generic [ref=e140]: "24"
+      - generic [ref=e142]: "25"
+      - generic [ref=e144]: "26"
+      - generic [ref=e146]: "27"
+      - generic [ref=e148]: "28"
+      - generic [ref=e150]: "29"
+      - generic [ref=e152]: "30"

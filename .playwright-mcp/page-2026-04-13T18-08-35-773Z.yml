@@ -1,0 +1,10 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - heading "打卡日历" [level=1] [ref=e6]
+    - paragraph [ref=e7]: 帮助您培养好习惯
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e10]: 用户名
+      - textbox "用户名" [ref=e11]:
+        - /placeholder: 请输入用户名
+    - button "登录" [ref=e13] [cursor=pointer]
