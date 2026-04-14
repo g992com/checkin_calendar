@@ -109,3 +109,113 @@ test('组日历可选组员列表应排除创建者（多成员场景）', async
   expect(options.some(opt => opt.includes('Member2'))).toBeTruthy();
   expect(options.some(opt => opt.includes('testcreator'))).toBeFalsy();
 });
+
+/**
+ * 测试用例：任务页选择组员列表应与组日历一致并过滤创建者
+ * 
+ * 问题描述：
+ * 任务管理页的成员下拉列表包含了创建者，与组日历的过滤规则不一致。
+ */
+test('任务页选择组员列表应与组日历一致并过滤创建者', async ({ page }) => {
+  const creatorName = 'taskpagecreator';
+  const memberName = 'TaskMember';
+  
+  // 登录
+  await page.goto('http://localhost:5175/');
+  await page.fill('input[placeholder="请输入用户名"]', creatorName);
+  await page.click('button:has-text("登录")');
+  
+  await page.waitForURL('http://localhost:5175/calendar');
+  await page.click('a:has-text("组/家庭")');
+  await page.waitForURL('http://localhost:5175/groups');
+  
+  // 创建小组
+  await page.click('button:has-text("创建组")');
+  await page.fill('input[placeholder="请输入组名称"]', 'TaskTestGroup');
+  await page.fill('input[placeholder="输入虚拟成员名称"]', memberName);
+  await page.click('button:has-text("添加")');
+  await page.click('button:has-text("创建")');
+  
+  await expect(page.locator('text=TaskTestGroup')).toBeVisible();
+  
+  // 进入任务页
+  await page.click('a:has-text("任务")');
+  await page.waitForURL('http://localhost:5175/tasks');
+  
+  // 点击创建任务
+  await page.click('button:has-text("创建任务")');
+  
+  // 选择组
+  await page.selectOption('select[name="groupId"]', { label: 'TaskTestGroup' });
+  
+  // 等待组员下拉加载
+  await page.waitForTimeout(500);
+  
+  // 获取组员下拉列表的所有选项
+  const memberSelect = page.locator('select[name="memberId"]');
+  const options = await memberSelect.locator('option').allTextContents();
+  
+  // 验证包含虚拟组员
+  expect(options.some(opt => opt.includes(memberName))).toBeTruthy();
+  
+  // 验证不包含创建者
+  expect(options.some(opt => opt.includes(creatorName))).toBeFalsy();
+});
+
+/**
+ * 测试用例：虚拟组员创建任务应被阻断并提示
+ * 
+ * 问题描述：
+ * 虚拟组员ID不是真实users.id，创建任务会因外键约束失败。
+ * 前端应提前阻断并给出明确提示。
+ */
+test('虚拟组员创建任务应被阻断并提示', async ({ page }) => {
+  const creatorName = 'virtualtestcreator';
+  const virtualMemberName = 'VirtualMember';
+  
+  // 登录
+  await page.goto('http://localhost:5175/');
+  await page.fill('input[placeholder="请输入用户名"]', creatorName);
+  await page.click('button:has-text("登录")');
+  
+  await page.waitForURL('http://localhost:5175/calendar');
+  await page.click('a:has-text("组/家庭")');
+  await page.waitForURL('http://localhost:5175/groups');
+  
+  // 创建小组
+  await page.click('button:has-text("创建组")');
+  await page.fill('input[placeholder="请输入组名称"]', 'VirtualTestGroup');
+  await page.fill('input[placeholder="输入虚拟成员名称"]', virtualMemberName);
+  await page.click('button:has-text("添加")');
+  await page.click('button:has-text("创建")');
+  
+  await expect(page.locator('text=VirtualTestGroup')).toBeVisible();
+  
+  // 进入任务页
+  await page.click('a:has-text("任务")');
+  await page.waitForURL('http://localhost:5175/tasks');
+  
+  // 点击创建任务
+  await page.click('button:has-text("创建任务")');
+  
+  // 填写任务信息
+  await page.fill('input[name="name"]', 'Test Task for Virtual Member');
+  await page.selectOption('select[name="groupId"]', { label: 'VirtualTestGroup' });
+  await page.waitForTimeout(500);
+  await page.selectOption('select[name="memberId"]', { label: virtualMemberName });
+  
+  // 设置监听对话框事件（alert）
+  const dialogPromise = page.waitForEvent('dialog');
+  
+  // 提交创建
+  await page.click('button[type="submit"]');
+  
+  // 等待对话框出现
+  const dialog = await dialogPromise;
+  
+  // 验证提示内容
+  expect(dialog.message()).toContain('当前版本不支持为虚拟组员创建任务');
+  
+  // 关闭对话框
+  await dialog.accept();
+});

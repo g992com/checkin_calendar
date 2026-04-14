@@ -99,17 +99,8 @@ export default function Tasks() {
     if (formData.groupId) {
       const selectedGroup = groups.find(group => group.id === formData.groupId);
       if (selectedGroup) {
-        // 构建组员列表，包括真实成员和虚拟组员
+        // 构建组员列表，仅包含虚拟组员（与组日历保持一致）
         const allMembers: Member[] = [];
-        
-        // 添加真实成员
-        selectedGroup.members.forEach(member => {
-          allMembers.push({
-            id: member.userId,
-            name: member.user.username,
-            type: 'real'
-          });
-        });
         
         // 添加虚拟组员
         if (selectedGroup.virtualMembers) {
@@ -186,6 +177,11 @@ export default function Tasks() {
       let taskUserId = user.id;
       if (formData.memberId) {
         taskUserId = formData.memberId;
+        // 检查是否为虚拟组员（虚拟组员ID以 vm_ 开头）
+        if (formData.memberId.startsWith('vm_')) {
+          alert('当前版本不支持为虚拟组员创建任务');
+          return;
+        }
       }
       
       if (editingTask) {
