@@ -174,29 +174,64 @@ cd frontend && npm run preview
 
 ```
 checkin_calendar/
-├── frontend/              # 前端项目
-│   ├── src/
-│   │   ├── components/    # 组件
-│   │   ├── pages/         # 页面
-│   │   ├── api/           # API 客户端
-│   │   └── context/       # React Context
-│   └── package.json
-├── backend/               # 后端项目
-│   ├── src/
-│   │   ├── routes/        # API 路由
-│   │   └── server.ts      # 服务器入口
-│   ├── prisma/            # 数据库模型
-│   └── package.json
-├── scripts/               # 启动脚本
-│   ├── start-windows.bat  # Windows 启动脚本 (cmd.exe)
-│   ├── stop-windows.bat   # Windows 关闭脚本 (cmd.exe)
-│   ├── start-windows-ps.ps1  # Windows 启动脚本 (PowerShell)
-│   ├── stop-windows-ps.ps1   # Windows 关闭脚本 (PowerShell)
-│   ├── start-windows-simple.bat  # Windows 启动脚本 (简单版)
-│   ├── stop-windows-simple.bat   # Windows 关闭脚本 (简单版)
-│   ├── start-linux.sh     # Linux 启动脚本
-│   └── stop-linux.sh      # Linux 关闭脚本
-└── package.json
+├── docs/                  # 文档
+│   └── 产品说明书.md
+├── frontend/              # 前端（Vite + React）
+│   ├── index.html
+│   ├── vite.config.ts
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   ├── package.json
+│   └── src/
+│       ├── main.tsx
+│       ├── App.tsx
+│       ├── index.css
+│       ├── api/           # API 客户端
+│       │   └── client.ts
+│       ├── components/
+│       │   ├── calendar/  # 日历网格、任务标签等
+│       │   └── rewards/   # 连续打卡激励
+│       ├── context/       # React Context
+│       ├── pages/         # 页面（登录、组、日历、任务、统计等）
+│       └── utils/
+├── backend/               # 后端（Express + Prisma）
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── cleanup-all-data.js
+│   ├── cleanup-personal-data.js
+│   ├── data/              # 数据目录占位（运行时数据库等）
+│   ├── prisma/
+│   │   ├── schema.prisma
+│   │   └── migrations/    # 数据库迁移
+│   └── src/
+│       ├── server.ts      # 入口
+│       ├── db/            # Prisma 客户端封装
+│       ├── middleware/    # 如 CORS
+│       ├── routes/        # API 路由（users、groups、tasks、checkins、statistics）
+│       └── utils/         # 业务计算、错误处理、连续打卡等
+├── scripts/               # 启动与停止脚本
+│   ├── start.js           # npm run dev 使用的并发启动
+│   ├── setup.sh
+│   ├── start-linux.sh
+│   ├── stop-linux.sh
+│   ├── start-windows.bat
+│   ├── stop-windows.bat
+│   ├── start-windows.ps1
+│   ├── stop-windows.ps1
+│   ├── start-windows-ps.ps1
+│   ├── stop-windows-ps.ps1
+│   ├── start-windows-simple.bat
+│   └── stop-windows-simple.bat
+├── tests/
+│   └── e2e/               # Playwright 端到端测试
+│       ├── group-calendar.spec.ts
+│       └── README.md
+├── package.json           # 根 workspace 脚本
+├── package-lock.json
+├── README.md
+└── DEPLOYMENT.md
 ```
 
 ## 核心功能说明
