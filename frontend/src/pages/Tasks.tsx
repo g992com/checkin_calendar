@@ -102,13 +102,15 @@ export default function Tasks() {
         // 构建组员列表，包括真实成员和虚拟组员
         const allMembers: Member[] = [];
         
-        // 添加真实成员
+        // 添加真实成员（创建者除外，基于role判断）
         selectedGroup.members.forEach(member => {
-          allMembers.push({
-            id: member.userId,
-            name: member.user.username,
-            type: 'real'
-          });
+          if (member.role !== '创建者') {
+            allMembers.push({
+              id: member.userId,
+              name: member.user.username,
+              type: 'real'
+            });
+          }
         });
         
         // 添加虚拟组员
