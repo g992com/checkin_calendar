@@ -33,23 +33,12 @@ export default function GroupCalendar() {
           // 提取成员信息
           const memberList: GroupMember[] = [];
           
-          // 添加真实成员
-          if (group.members) {
-            group.members.forEach((member: any) => {
-              memberList.push({
-                userId: member.userId,
-                username: member.user.username,
-                avatar: member.user.avatar
-              });
-            });
-          }
-          
           // 从本地存储加载虚拟组员信息
           const virtualMembersData = localStorage.getItem('virtualMembers');
           const virtualMembersMap = virtualMembersData ? JSON.parse(virtualMembersData) : {};
           const virtualMembers = virtualMembersMap[id] || [];
           
-          // 添加虚拟组员
+          // 添加虚拟组员（可选组员仅包含虚拟组员，不包含创建者）
           virtualMembers.forEach((member: any) => {
             memberList.push({
               userId: member.id,
